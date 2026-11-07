@@ -1,79 +1,76 @@
 # Polyforge
 
-**An open, LLM-agnostic game creation platform. Plug in any model — or several at once — each routed to the work it does best.**
+**A tool for creating video games efficiently using AI.** You bring the idea and the final say; Polyforge breaks the game into small, buildable steps, builds them in a real engine, checks every step with evidence, and hands you back a playable project you own.
 
-One game. Every model at its strength.
+One game, built step by step — and no step is accepted until it checks out.
 
 ---
 
-## The problem
+## Why
 
-Today's AI game builders lock you into *their* models:
+Creating a game with AI help today usually means one assistant does everything: it plans, codes, makes the art calls, and then grades its own work. That is where quality collapses — a builder that judges itself lets its own mistakes through, and a single model averages away the fact that different models are good at different parts of making a game.
 
-- **Rosebud, Star, Websim, Verse8** compose models internally, but the platform chooses them. You can't bring your own, swap a weak link, or use a local model.
-- The models you'd want are good at *different things* — one writes the cleanest code, another has the best design taste, another generates the most consistent art, another is the cheapest tireless playtester. A single-model platform averages all of that away.
-- One model left alone both **proposes and disposes** — it generates and judges its own work — and that is where quality collapses. Every experienced builder rediscovers this: you need a verifier that is not the author.
+The pieces for something better already exist in the open: bridges that let an AI drive real engines (Godot, Unity, Unreal, Blender), gateways that connect many model providers, and team-style workflows that proved role-based building works for software. Polyforge assembles them into one practical tool whose only job is shipping games.
 
-Meanwhile the parts for something better already exist in the open: MCP bridges let any capable LLM drive real engines (Godot, Unity, Unreal, Blender), model gateways route between providers, and multi-agent frameworks (ChatDev, MetaGPT) proved role-based teams work for general software. Nobody has assembled them into a game creation platform whose core design is *model pluralism*.
-
-## The idea
-
-Polyforge is the orchestration layer between **you** (the creative director), **a team of models**, and **real game engines**:
+## How it works
 
 ```
-        You — direction, taste, final say
+        You — the idea, the taste, the final say
                     │
             ┌───────▼────────┐
-            │   Polyforge    │  roles, routing, verification, memory
+            │   Polyforge    │  breaks the game into steps,
+            │                │  routes each step, checks results
             └───┬───┬───┬────┘
         ┌───────▼┐ ┌▼──────┐ ┌▼─────────┐
-        │ Model A│ │Model B│ │ Model C… │  any provider, any endpoint,
-        │ (code) │ │(design)│ │ (art/QA) │  cloud or local
+        │ Model A│ │Model B│ │ Model C… │  the right model for each
+        │ (code) │ │(design)│ │ (art/QA) │  job — cloud or local
         └───────┬┘ └┬──────┘ └┬─────────┘
             ┌───▼───▼────────▼───┐
-            │  Engine bridges    │  Godot · Unity · Unreal · Blender
-            │  (MCP tool layer)  │  → a real, exportable game project
+            │  Real engines      │  Godot first, then Unity /
+            │  Godot · Unity ·   │  Unreal / Blender — output is a
+            │  Unreal · Blender  │  standard project you own
             └────────────────────┘
 ```
 
+The working loop: **brief → plan → build → run → check against the plan → fix or ask you → checkpoint.** Every accepted state is saved, so a bad step never costs you a good build.
+
 ### Design principles
 
-1. **Any LLM can plug in.** OpenAI-compatible endpoints, provider APIs, MCP clients (Claude Code, Cursor, Codex, Gemini CLI…), and local models (Ollama) are all first-class. A new model release is a config change, not a platform update.
-2. **Many LLMs at once, routed by strength.** Each role — Director, Architect, Coder, Artist, Composer, Playtester, **Verifier** — can run on a different model, chosen per role and per budget. Routing is data, not code: benchmark a role, swap the model, keep the game.
-3. **Propose ≠ dispose.** No model judges its own output. Generation and verification are separate roles, ideally separate models, and verification is grounded in evidence: the game compiles, the tests pass, the screenshot matches the brief, a playthrough reaches the goal.
-4. **Real engines, real projects.** Output is a standard Godot/Unity/Unreal project you own and can open, edit, and ship — no platform lock-in, no rebuild-to-export.
-5. **The human stays the decider.** The platform does the legwork and brings back checked options; taste, direction and the final call belong to the creator.
+1. **Built for games, start to finish.** Games break down into smaller pieces unusually well — a core loop, scenes, systems, content. Polyforge's staged method (a playable skeleton first, then verified layers) is built around that, with a check at every join.
+2. **The right model for each job.** Coding, design, art direction, music and playtesting are different strengths. Polyforge routes each role — Director, Architect, Coder, Artist, Composer, Playtester, Verifier — to the model that does it best, and a new model release is a config change, not a rebuild.
+3. **The builder never grades its own homework.** Building and checking are separate steps, ideally separate models. A step passes on evidence — the game runs, the tests pass, the screenshot matches the brief, a playthrough reaches the goal — not on the builder's say-so.
+4. **Real engines, real projects.** The output is a standard Godot/Unity/Unreal project you can open, edit, and ship. No lock-in, no rebuild-to-export.
+5. **You stay the decider.** The tool does the legwork and brings back checked options; taste, direction and the final call belong to the creator. The plan stays under the hood — you see progress, not plumbing.
+
+## What's in this repo
+
+- **The Polyforge core** — provider registry and role router (config-driven), the artifact pipeline roles hand work through, and session checkpoints.
+- **The Godot bridge** — the first engine connection: build, run headless, capture screenshots and playthroughs.
+- **The skeleton library** — [docs/skeleton-library.md](docs/skeleton-library.md): the finite set of game skeletons (core loop + rules core) that genre after genre is built from.
+- **Experiment 1** — [docs/experiment-1-fighter.md](docs/experiment-1-fighter.md): a staged 2D fighter build used to prove the method end to end.
+- **The plan** — [ROADMAP.md](ROADMAP.md).
 
 ## Prior art — and the gap
 
 | Project | What it proves | What it isn't |
 | --- | --- | --- |
-| **CodeScape** | An AI game creation engine can accept many providers + custom endpoints, with an MCP bridge for external agents | A single vendor's engine; model-plural *routing by role/strength* is not its stated design |
-| **Verse8** | Multi-agent orchestration can turn prompts into playable games | Closed platform, their agents and models, crypto/IP layer attached |
-| **Rosebud AI** | Composing several models (code, image, video) beats one model | *They* pick the models; users can't plug in or route their own |
-| **Engine MCP servers** (godot-mcp, Unity-MCP, Blender MCP, UE 5.8 MCP) | Any MCP-capable LLM can drive a real editor end-to-end | Plumbing, not a platform: no roles, routing, taste, or verification |
-| **ChatDev / MetaGPT** | Role-based agent teams (PM, architect, engineer, QA) build software | General software, OpenAI-centric, no engine bridge or asset pipeline |
-| **UniGen (research)** | Multi-agent pipelines can generate playable 3D prototypes in Unity | A paper, not a platform |
+| **CodeScape** | An AI game creation engine can accept many providers, with a bridge for external agents | A single vendor's engine; routing different models to different roles by strength is not its design |
+| **Verse8** | Orchestrated agents can turn prompts into playable games | Closed platform — their agents, their models |
+| **Rosebud AI** | Composing several models (code, image, video) beats one model | *They* pick the models; creators can't route their own |
+| **Engine MCP servers** (godot-mcp, Unity-MCP, Blender MCP, UE 5.8 MCP) | An AI can drive a real editor end-to-end | Plumbing, not a product: no roles, routing, or checking |
+| **ChatDev / MetaGPT** | Role-based teams (PM, architect, engineer, QA) build software | General software, no engine bridge or game pipeline |
 
-**The gap Polyforge occupies:** open + any-LLM + *several* LLMs routed by strength + game-native creation, with verification built in.
+**The gap Polyforge occupies:** an open tool, built only for games, that puts several models to work at their strengths and checks every step before it counts.
 
 ## Architecture sketch
 
-- **Model layer** — provider registry (API, OpenAI-compatible, MCP client, local), capability profiles per model (code, design, art direction, audio, long-context, cost), and a role router that assigns work accordingly.
-- **Role layer** — Director (breaks a brief into a build plan), Architect (spec, acceptance criteria), Coder, Artist, Composer, Playtester (plays the build, files evidence), Verifier (judges evidence against criteria; can veto). Roles communicate through artifacts, not vibes.
-- **Engine layer** — MCP tool bridges to Godot first (open, scriptable, headless-friendly), then Unity/Unreal/Blender. Screenshot + playthrough capture as the platform's eyes.
-- **Loop** — brief → plan → build → run → verify against criteria → repair or escalate to the human → checkpoint (every accepted state is committed; nothing good is ever lost to a bad prompt).
-
-## Roadmap (v0.x)
-
-- [ ] Provider registry + role router (config-driven)
-- [ ] Godot MCP bridge wired to Coder + Playtester + Verifier loop
-- [ ] First end-to-end demo: one-sentence brief → playable Godot micro-game, two different models in two roles
-- [ ] Screenshot-diff verification for art/level briefs
-- [ ] Second engine bridge (Unity or Blender)
+- **Model layer** — provider registry (provider APIs, OpenAI-compatible endpoints, MCP clients, local models), capability and cost profiles per model, and the role router.
+- **Role layer** — Director (breaks a brief into a build plan), Architect (spec and acceptance criteria), Coder, Artist, Composer, Playtester (plays the build, files evidence), Verifier (judges evidence against the criteria; can send a step back). Roles communicate through artifacts, not chat.
+- **Engine layer** — bridges to Godot first (open, scriptable, headless-friendly), then Unity/Unreal/Blender. Screenshots and playthrough capture are the tool's eyes.
+- **Loop** — brief → plan → build → run → check → repair or escalate to you → checkpoint.
 
 ## Status
 
-Concept repository — created 2026-10-24. Design discussion happens in Issues.
+In active design and early build (started 2026-10-24). MIT licensed. Design discussion happens in Issues; the build queue is in [ROADMAP.md](ROADMAP.md).
 
-*Name is a working title; the repo is private while the concept settles.*
+*Polyforge is a working title.*
